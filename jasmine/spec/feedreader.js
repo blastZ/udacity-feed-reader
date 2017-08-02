@@ -16,9 +16,13 @@ $(function() {
          * 比如你把 app.js 里面的 allFeeds 变量变成一个空的数组然后刷新
          * 页面看看会发生什么。
         */
+        const sameDetection = (variable) => {
+            expect(variable).toBeDefined();
+            expect(variable.length).not.toBe(0);
+        }
+
         it('are defined', function() {
-            expect(allFeeds).toBeDefined();
-            expect(allFeeds.length).not.toBe(0);
+            sameDetection(allFeeds);
         });
 
 
@@ -27,8 +31,9 @@ $(function() {
          */
          it('url is defined', function() {
             allFeeds.map((feed) => {
-                expect(feed.url).toBeDefined();
-                expect(feed.url.length).not.toBe(0);
+                sameDetection(feed.url);
+                const regexURL = /^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?/;
+                expect(feed.url).toMatch(regexURL);
             })
          })
 
@@ -38,8 +43,7 @@ $(function() {
          */
          it('name is defined', function() {
              allFeeds.map((feed) => {
-                 expect(feed.name).toBeDefined();
-                 expect(feed.name.length).not.toBe(0);
+                sameDetection(feed.name);
              })
          })
     });
@@ -52,7 +56,7 @@ $(function() {
          * 来搞清楚我们是怎么实现隐藏/展示菜单元素的。
          */
          it('is hidden at start', function() {
-             expect($('body').attr('class')).toBe('menu-hidden');
+             expect($('body').hasClass('menu-hidden')).toBe(true);
          })
 
          /* TODO:
@@ -63,9 +67,9 @@ $(function() {
           it('click to show or hide', function() {
               const menuButton = $('.menu-icon-link');
               menuButton.trigger('click');
-              expect($('body').attr('class')).toBe('');
+              expect($('body').hasClass('menu-hidden')).toBe(false);
               menuButton.trigger('click');
-              expect($('body').attr('class')).toBe('menu-hidden');
+              expect($('body').hasClass('menu-hidden')).toBe(true);
           })
     })
 
@@ -79,9 +83,7 @@ $(function() {
          * 和异步的 done() 函数。
          */
          beforeEach(function(done) {
-             loadFeed(0, function() {
-                 done();
-             });
+             loadFeed(0, done);
          })
 
          it('should have at least one entry element', function(done) {
